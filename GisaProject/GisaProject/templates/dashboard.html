@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard de Qualidade da Água{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Dashboard de Qualidade da Água</h2>
+  <div class="row">
+    <!-- Temperatura -->
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Temperatura</h5>
+          <p class="card-text">{{ measurement.temperatura }} °C</p>
+        </div>
+      </div>
+    </div>
+    <!-- pH -->
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">pH</h5>
+          <p class="card-text">{{ measurement.ph }}</p>
+        </div>
+      </div>
+    </div>
+    <!-- ORP -->
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">ORP</h5>
+          <p class="card-text">{{ measurement.orp }} mV</p>
+        </div>
+      </div>
+    </div>
+    <!-- Condutividade -->
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Condutividade</h5>
+          <p class="card-text">{{ measurement.condutividade }} µS/cm</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-3">
+    <!-- Turbidez -->
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Turbidez</h5>
+          <p class="card-text">{{ measurement.turbidez }} NTU</p>
+        </div>
+      </div>
+    </div>
+    <!-- Nível -->
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Nível</h5>
+          <p class="card-text">{{ measurement.nivel }} cm</p>
+        </div>
+      </div>
+    </div>
+    <!-- Pressão -->
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Pressão</h5>
+          <p class="card-text">{{ measurement.pressao }} kPa</p>
+        </div>
+      </div>
+    </div>
+    <!-- Frequência -->
+    <div class="col-md-3">
+      <div class="card text-center">
+        <div class="card-body">
+          <h5 class="card-title">Frequência</h5>
+          <p class="card-text">{{ measurement.frequencia }} Hz</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
