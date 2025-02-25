@@ -1,0 +1,49 @@
+/* Estilos gerais */
+body {
+    background-color: #0a192f;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+/* Cabeçalho e rodapé */
+header, footer {
+    background-color: #112240;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Área principal */
+main {
+    padding: 20px;
+}
+
+/* Container principal */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Estilizando os cards */
+.card {
+    background-color: #233554;
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 20px;  /* espaçamento entre os cards */
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+}
+
+.card-text {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
