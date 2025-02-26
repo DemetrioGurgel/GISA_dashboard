@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard de Qualidade da Água{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2>Dashboard de Qualidade da Água</h2>
+
+  {% if user.is_superuser %}
+    <!-- Formulário para o superusuário selecionar o sistema -->
+    <form method="get" class="mb-4">
+      <label for="sistema">Selecione um Sistema:</label>
+      <select id="sistema" name="sistema" onchange="this.form.submit()">
+        <option value="">-- Selecione --</option>
+        {% for sistema in sistemas %}
+          <option value="{{ sistema.id }}" {% if selected_sistema and sistema.id == selected_sistema.id %}selected{% endif %}>
+            {{ sistema.nome }} - {{ sistema.municipio }}
+          </option>
+        {% endfor %}
+      </select>
+    </form>
+  {% endif %}
+
+  <div class="row">
+    <!-- Card para Temperatura -->
+    <div class="col-md-3">
+      <a href="{% url 'historico' parameter='temperatura' %}" style="text-decoration: none;">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">Temperatura</h5>
+            <p class="card-text" id="temperatura">{{ measurement.temperatura }} °C</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <!-- Card para pH -->
+    <div class="col-md-3">
+      <a href="{% url 'historico' parameter='ph' %}" style="text-decoration: none;">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">pH</h5>
+            <p class="card-text" id="ph">{{ measurement.ph }}</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <!-- Card para ORP -->
+    <div class="col-md-3">
+      <a href="{% url 'historico' parameter='orp' %}" style="text-decoration: none;">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">ORP</h5>
+            <p class="card-text" id="orp">{{ measurement.orp }} mV</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <!-- Card para Condutividade -->
+    <div class="col-md-3">
+      <a href="{% url 'historico' parameter='condutividade' %}" style="text-decoration: none;">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">Condutividade</h5>
+            <p class="card-text" id="condutividade">{{ measurement.condutividade }} µS/cm</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="row mt-3">
+    <!-- Card para Turbidez -->
+    <div class="col-md-3">
+      <a href="{% url 'historico' parameter='turbidez' %}" style="text-decoration: none;">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">Turbidez</h5>
+            <p class="card-text" id="turbidez">{{ measurement.turbidez }} NTU</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <!-- Card para Nível -->
+    <div class="col-md-3">
+      <a href="{% url 'historico' parameter='nivel' %}" style="text-decoration: none;">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">Nível</h5>
+            <p class="card-text" id="nivel">{{ measurement.nivel }} cm</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <!-- Card para Pressão -->
+    <div class="col-md-3">
+      <a href="{% url 'historico' parameter='pressao' %}" style="text-decoration: none;">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">Pressão</h5>
+            <p class="card-text" id="pressao">{{ measurement.pressao }} kPa</p>
+          </div>
+        </div>
+      </a>
+    </div>
+    <!-- Card para Frequência -->
+    <div class="col-md-3">
+      <a href="{% url 'historico' parameter='frequencia' %}" style="text-decoration: none;">
+        <div class="card text-center">
+          <div class="card-body">
+            <h5 class="card-title">Frequência</h5>
+            <p class="card-text" id="frequencia">{{ measurement.frequencia }} Hz</p>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+function fetchLatestMeasurement() {
+    fetch("{% url 'latest_measurement' %}")
+      .then(response => response.json())
+      .then(data => {
+          console.log("Dados recebidos:", data);
+          if (data.temperatura !== undefined) {
+              document.getElementById('temperatura').textContent = data.temperatura + ' °C';
+              document.getElementById('ph').textContent = data.ph;
+              document.getElementById('orp').textContent = data.orp + ' mV';
+              document.getElementById('turbidez').textContent = data.turbidez + ' NTU';
+              document.getElementById('condutividade').textContent = data.condutividade + ' µS/cm';
+              document.getElementById('nivel').textContent = data.nivel + ' cm';
+              document.getElementById('pressao').textContent = data.pressao + ' kPa';
+              document.getElementById('frequencia').textContent = data.frequencia + ' Hz';
+          }
+      })
+      .catch(error => console.error("Erro ao buscar a medição:", error));
+}
+
+// Atualiza a medição a cada 2 segundos
+setInterval(fetchLatestMeasurement, 2000);
+</script>
+{% endblock %}
