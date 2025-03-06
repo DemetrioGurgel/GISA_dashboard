@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Cadastrar Fiscal{% endblock %}
+{% block content %}
+  <div class="container mt-4">
+    <h2>Cadastrar Fiscal</h2>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Cadastrar</button>
+    </form>
+  </div>
+{% endblock %}
