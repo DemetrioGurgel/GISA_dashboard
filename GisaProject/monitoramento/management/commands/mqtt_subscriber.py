@@ -43,14 +43,6 @@ class Command(BaseCommand):
                 )
                 self.stdout.write(self.style.SUCCESS("Medição salva com sucesso."))
 
-                # Envia a medição para os clientes conectados via WebSocket
-                async_to_sync(channel_layer.group_send)(
-                    "dashboard_group",
-                    {
-                        "type": "send_measurement",  # Esse nome deve corresponder ao método do consumer
-                        "data": payload,
-                    }
-                )
             except Exception as e:
                 self.stdout.write(self.style.ERROR(f"Erro ao processar a mensagem: {e}"))
 
