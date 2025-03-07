@@ -115,9 +115,6 @@ def historico(request, parameter):
 @login_required
 @require_GET
 def latest_measurement(request):
-    measurement = Measurement.objects.order_by('-timestamp').first()
-
-    sistemas = SistemaAbastecimento.objects.all()
     sistema_id = request.GET.get('sistema')
     if sistema_id:
         try:

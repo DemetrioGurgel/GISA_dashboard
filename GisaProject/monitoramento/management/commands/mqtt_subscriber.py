@@ -30,8 +30,19 @@ class Command(BaseCommand):
             self.stdout.write(f"Mensagem recebida no tópico {msg.topic}")
             try:
                 payload = json.loads(msg.payload.decode('utf-8'))
+                mac = payload.get("MACAddress")
+
+                # Procura o dispositivo com o MAC recebido
+                from monitoramento.models import Measurement, Device
+                device = Device.objects.filter(device_id=mac).first()
+
+                # Se o dispositivo existir, atribui o sistema do dispositivo à medição
+                sistema = device.water_system if device else None
+
+                # Cria a medição associada ao dispositivo (e, consequentemente, ao sistema)
                 Measurement.objects.create(
-                    mac_address=payload.get("MACAddress"),
+                    sistema=sistema,
+                    mac_address=mac,
                     temperatura=payload.get("temperatura"),
                     ph=payload.get("ph"),
                     orp=payload.get("orp"),
@@ -43,6 +54,14 @@ class Command(BaseCommand):
                 )
                 self.stdout.write(self.style.SUCCESS("Medição salva com sucesso."))
 
+                # Envia a medição para os clientes conectados via WebSocket
+                async_to_sync(channel_layer.group_send)(
+                    "dashboard_group",
+                    {
+                        "type": "send_measurement",  # Esse nome deve corresponder ao método do consumer
+                        "data": payload,
+                    }
+                )
             except Exception as e:
                 self.stdout.write(self.style.ERROR(f"Erro ao processar a mensagem: {e}"))
 
