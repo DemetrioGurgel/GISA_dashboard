@@ -72,3 +72,6 @@ DEBUG = True
 ROOT_URLCONF = 'GisaProject.urls'
 
 SECRET_KEY = 'sua-chave-secreta-muito-complexa-e-única'
+
+TIME_ZONE = "America/Sao_Paulo"
+USE_TZ = True

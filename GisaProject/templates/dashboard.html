@@ -119,7 +119,20 @@
 
 <script>
 function fetchLatestMeasurement() {
-    fetch("{% url 'latest_measurement' %}")
+    // Captura o sistema_id do contexto do template
+    const sistemaId = "{{ sistema_id }}";  // Certifique-se de que 'sistema_id' está no contexto do template
+
+    // Verifica se o sistemaId está definido
+    if (!sistemaId) {
+        console.error("sistema_id não está definido.");
+        return;
+    }
+
+    // Monta a URL com o sistema_id como parâmetro
+    const url = "{% url 'latest_measurement' %}?sistema=" + sistemaId;
+
+    // Faz a requisição
+    fetch(url)
       .then(response => response.json())
       .then(data => {
           console.log("Dados recebidos:", data);
@@ -137,7 +150,7 @@ function fetchLatestMeasurement() {
       .catch(error => console.error("Erro ao buscar a medição:", error));
 }
 
-// Atualiza a medição a cada 2 segundos
-setInterval(fetchLatestMeasurement, 2000);
+// Chama a função periodicamente (opcional)
+setInterval(fetchLatestMeasurement, 5000);  // Atualiza a cada 5 segundos
 </script>
 {% endblock %}

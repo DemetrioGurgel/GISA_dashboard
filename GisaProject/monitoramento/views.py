@@ -11,7 +11,6 @@ from django.contrib.auth.decorators import user_passes_test
 
 @login_required
 def dashboard(request):
-    # Se o usuário for superusuário, ele pode selecionar qual sistema visualizar.
     if request.user.is_superuser:
         sistemas = SistemaAbastecimento.objects.all()
         sistema_id = request.GET.get('sistema')
@@ -24,9 +23,8 @@ def dashboard(request):
                 measurements = Measurement.objects.none()
         else:
             selected_sistema = None
-            measurements = Measurement.objects.none()  # ou measurements = Measurement.objects.all() se preferir exibir todos
+            measurements = Measurement.objects.none()
 
-        # Se não houver medições, cria uma instância temporária com valores zerados
         if not measurements.exists():
             measurement = Measurement(
                 temperatura=0,
@@ -45,9 +43,10 @@ def dashboard(request):
             'sistemas': sistemas,
             'selected_sistema': selected_sistema,
             'measurement': measurement,
+            'sistema_id': sistema_id,  # Passando o sistema_id para o template
         }
+
     else:
-        # Para usuários fiscais, filtra as medições pelo sistema associado ao perfil
         try:
             fiscal_profile = request.user.fiscal_profile
             sistema = fiscal_profile.sistema
@@ -117,19 +116,37 @@ def historico(request, parameter):
 @require_GET
 def latest_measurement(request):
     measurement = Measurement.objects.order_by('-timestamp').first()
-    if measurement is None:
-        data = {}
+
+    sistemas = SistemaAbastecimento.objects.all()
+    sistema_id = request.GET.get('sistema')
+    if sistema_id:
+        try:
+            selected_sistema = SistemaAbastecimento.objects.get(id=sistema_id)
+
+        except SistemaAbastecimento.DoesNotExist:
+            selected_sistema = None
     else:
-        data = {
-            'temperatura': measurement.temperatura,
-            'ph': measurement.ph,
-            'orp': measurement.orp,
-            'turbidez': measurement.turbidez,
-            'condutividade': measurement.condutividade,
-            'nivel': measurement.nivel,
-            'pressao': measurement.pressao,
-            'frequencia': measurement.frequencia,
-        }
+        selected_sistema = None
+
+    if selected_sistema is not None:
+        measurement = Measurement.objects.order_by('-timestamp').first()
+        if (measurement is None) or (measurement.mac_address != selected_sistema.mac_adress):
+            data = {}
+        else:
+            data = {
+                'temperatura': measurement.temperatura,
+                'ph': measurement.ph,
+                'orp': measurement.orp,
+                'turbidez': measurement.turbidez,
+                'condutividade': measurement.condutividade,
+                'nivel': measurement.nivel,
+                'pressao': measurement.pressao,
+                'frequencia': measurement.frequencia,
+            }
+        print(f"Latest Measuerment: {data}")
+        print(f"Sistema ID: {sistema_id}, Sistema: {selected_sistema}")
+    else:
+        data = {}
     return JsonResponse(data)
 
 def superuser_required(view_func):
